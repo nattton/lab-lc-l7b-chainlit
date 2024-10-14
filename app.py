@@ -13,8 +13,18 @@ load_dotenv()
 
 @cl.on_chat_start
 async def on_chat_start():
-    # TODO: write logic codes
-    pass
+    model = ChatOpenAI(model="gpt-3.5-turbo",streaming=True)
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            (
+                "system",
+                "You will be provided with statements, and your task is to convert them to standard English. Using formal words. Ensure that the languageg used meets the standards required for an IELTS score of 8.0",
+            ),
+            ("human", "{question}"),
+        ]
+    )
+    runnable = prompt | model | StrOutputParser()
+    cl.user_session.set("runnable", runnable)
 
 
 @cl.on_message
